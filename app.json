@@ -1,0 +1,30 @@
+{
+  "development": {
+    "port": 3000
+  },
+  "production": {
+    "port": 8080
+  },
+  "build": {
+    "entry": {
+      "index": [ "./src" ]
+    },
+    "output": {
+      "path": "./dist",
+      "publicPath": "/"
+    }
+  },
+  "express": {
+    "output": {
+      "path": "./public/js",
+      "publicPath": "/"
+    },
+    "static": "public"
+  },
+  "local": {
+    "output": {
+      "path": "../backend-repository/static",
+      "publicPath": "/"
+    }
+  }
+}
