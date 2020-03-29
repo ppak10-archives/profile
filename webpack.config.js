@@ -67,6 +67,7 @@ const CONFIG = {
 module.exports = (env) => {
   if (process.env.NODE_ENV && process.env.NODE_ENV.trim() === 'development') {
     CONFIG.mode = 'development';
+    CONFIG.watch = true;
     if (env.express) {
       // Sets Hot Loading config and plugins
       CONFIG.entry.index = [
@@ -80,6 +81,7 @@ module.exports = (env) => {
     }
   } else {
     CONFIG.mode = 'production';
+    CONFIG.watch = false;
   }
 
   if (env) {

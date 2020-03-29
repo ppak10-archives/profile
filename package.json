@@ -9,7 +9,7 @@
     "build-local": "webpack --env.local",
     "build-local-watch": "webpack --env.local --watch",
     "express": "npx babel-node .",
-    "start": "npm run build-express && npm run express"
+    "start": "concurrently \"npm run build-express\" \"npm run express\""
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-module-resolver": "^4.0.0",
+    "concurrently": "^5.1.0",
     "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
     "eslint-config-google": "^0.14.0",
