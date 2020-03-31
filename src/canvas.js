@@ -4,30 +4,41 @@
  */
 
 // Constants
-const EDGE_LENGTH = 50;
+import CANVAS from 'constants/canvas.json';
+
 const COLORS = ['red', 'oragne', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+const EDGE_LENGTH = 50;
+
+// Draws extra set of triangles past maximum index values to hide white space
+const RESIZE_BUFFER = 1;
 
 export default class Canvas {
   constructor(canvas) {
     this.canvas = canvas;
+    this.iMax =
+      2 * (window.innerWidth / EDGE_LENGTH) -
+      CANVAS.marginRight +
+      RESIZE_BUFFER;
+    this.jMax = window.innerHeight / EDGE_LENGTH - CANVAS.marginBottom;
   }
 
   draw() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
-    const I_MAX = window.innerWidth / EDGE_LENGTH + 1;
-    const J_MAX = window.innerHeight / EDGE_LENGTH + 1;
+    this.iMax =
+      2 * (window.innerWidth / EDGE_LENGTH) -
+      CANVAS.marginRight +
+      RESIZE_BUFFER;
+    this.jMax = window.innerHeight / EDGE_LENGTH - CANVAS.marginBottom;
 
     if (this.canvas.getContext) {
-      for (let j = 0; j < J_MAX; j++) {
-        for (let i = 0; i < I_MAX; i++) {
-          // Triangles for row A
-          const triangleA = new Triangle(i, j, 'down');
-          triangleA.draw();
+      for (let j = CANVAS.marginTop; j < this.jMax; j++) {
+        for (let i = CANVAS.marginLeft; i < this.iMax; i++) {
+          const orientation = (j + i) % 2 ? 'down' : 'up';
 
-          // Triangles for row B
-          const triangleB = new Triangle(i, j, 'up');
-          triangleB.draw();
+          // Draw triangle
+          const triangle = new Triangle(i, j, orientation);
+          triangle.draw();
         }
       }
     }
@@ -43,14 +54,19 @@ export class Triangle extends Canvas {
   constructor(i, j, orientation) {
     super(document.getElementById('background'));
     if (orientation === 'up') {
-      this.x = i * EDGE_LENGTH - EDGE_LENGTH / 2 ** ((j + 1) % 2);
+      this.x =
+        (Math.floor(i / 2) + (j % 2)) * EDGE_LENGTH -
+        EDGE_LENGTH / 2 ** ((j + 1) % 2);
       this.y = (j + 1) * EDGE_LENGTH;
       this.yCoefficient = -1;
     } else if (orientation === 'down') {
-      this.x = i * EDGE_LENGTH - (EDGE_LENGTH / 2) * (j % 2);
+      this.x =
+        (Math.floor(i / 2) - 1) * EDGE_LENGTH + EDGE_LENGTH / 2 ** (j % 2);
       this.y = j * EDGE_LENGTH;
       this.yCoefficient = 1;
     }
+    this.i = i;
+    this.j = j;
   }
 
   draw() {
@@ -67,7 +83,18 @@ export class Triangle extends Canvas {
     ctx.lineWidth = 1;
     ctx.strokeStyle = COLORS[Math.floor(Math.random() * COLORS.length)];
     ctx.stroke();
-    ctx.fillStyle = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+    // Padding
+    if (
+      this.i < CANVAS.paddingLeft + CANVAS.marginLeft ||
+      this.j < CANVAS.paddingTop + CANVAS.marginTop ||
+      this.j >= this.jMax - CANVAS.paddingBottom ||
+      this.i >= this.iMax - CANVAS.paddingRight
+    ) {
+      ctx.fillStyle = 'black';
+    } else {
+      ctx.fillStyle = COLORS[Math.floor(Math.random() * COLORS.length)];
+    }
     ctx.fill();
   }
 }

@@ -13,6 +13,7 @@
       "root": ["./"],
       "alias": {
         "app": "./app.json",
+        "constants": "./src/constants",
         "styles": "./src/styles"
       }
     }]
