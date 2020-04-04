@@ -7,12 +7,9 @@
 import 'styles/main.less';
 
 // Canvas
-import Canvas from './canvas';
+import CanvasManager from './canvas/manager';
+import Layout from './canvas/layout';
 
-// Creates canvas element and passes reference to class
-const canvasElement = document.createElement('CANVAS');
-canvasElement.setAttribute('id', 'background');
-document.body.appendChild(canvasElement);
-
-const canvas = new Canvas(canvasElement);
-canvas.start();
+const canvas = new CanvasManager();
+const tileLayout = new Layout(canvas.layers.background);
+tileLayout.start();

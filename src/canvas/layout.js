@@ -1,25 +1,26 @@
 /**
- * canvas.js
- * Classes for instantiating canvas and drawing shapes
+ * layout.js
+ * Classes for layout styles for canvas layer
  */
 
 // Constants
 import CANVAS from 'constants/canvas.json';
 import TRIANGLE from 'constants/triangle.json';
 
-const EDGE_LENGTH = 25;
+// Shapes
+import triangle from './shapes/triangle';
 
 // Draws extra set of triangles past maximum index values to hide white space
 const RESIZE_BUFFER = 1;
 
-export default class Canvas {
+export default class Layout {
   constructor(canvas) {
     this.canvas = canvas;
     this.iMax =
-      2 * (window.innerWidth / EDGE_LENGTH) -
+      2 * (window.innerWidth / TRIANGLE.height) -
       CANVAS.marginRight +
       RESIZE_BUFFER;
-    this.jMax = window.innerHeight / EDGE_LENGTH - CANVAS.marginBottom;
+    this.jMax = window.innerHeight / TRIANGLE.height - CANVAS.marginBottom;
     this.i = null;
     this.j = null;
   }
@@ -28,11 +29,12 @@ export default class Canvas {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.iMax =
-      2 * (window.innerWidth / EDGE_LENGTH) -
+      2 * (window.innerWidth / TRIANGLE.height) -
       CANVAS.marginRight +
       RESIZE_BUFFER;
-    this.jMax = window.innerHeight / EDGE_LENGTH - CANVAS.marginBottom;
+    this.jMax = window.innerHeight / TRIANGLE.height - CANVAS.marginBottom;
 
+    const drawTriangle = triangle.bind(this);
     if (this.canvas.getContext) {
       for (let j = CANVAS.marginTop; j < this.jMax; j++) {
         for (let i = CANVAS.marginLeft; i < this.iMax; i++) {
@@ -48,12 +50,10 @@ export default class Canvas {
             const options = {
               fillStyle: 'blue',
             };
-            const triangle = new Triangle(i, j, orientation, options);
-            triangle.draw();
+            drawTriangle(i, j, orientation, options);
           } else {
             // Draw triangle
-            const triangle = new Triangle(i, j, orientation);
-            triangle.draw();
+            drawTriangle(i, j, orientation);
           }
         }
       }
@@ -72,9 +72,9 @@ export default class Canvas {
     }
 
     // Calculates i and j values for triangle tiling
-    this.j = Math.floor(this.mouseY / EDGE_LENGTH);
-    const xDown = (EDGE_LENGTH - (this.mouseY % EDGE_LENGTH)) / 2;
-    const xUp = (this.mouseY % EDGE_LENGTH) / 2;
+    this.j = Math.floor(this.mouseY / TRIANGLE.height);
+    const xDown = (TRIANGLE.height - (this.mouseY % TRIANGLE.height)) / 2;
+    const xUp = (this.mouseY % TRIANGLE.height) / 2;
     const xFirstOffset = ((this.j + 1) % 2) * xUp + (this.j % 2) * xDown;
     const xFirstPairTriangle =
       2 * ((this.j % 2) * xUp + ((this.j + 1) % 2) * xDown);
@@ -89,67 +89,13 @@ export default class Canvas {
       const xRemainderTriangles = xRemainder - xFirstPairTriangle <= 0 ? 1 : 2;
       this.i = 2 * xCompletePairs + xRemainderTriangles;
     }
-    // this.drawTiling();
   }
 
   start() {
     const draw = this.drawTiling.bind(this);
     const onMouseMove = this.onMouseMove.bind(this);
-    window.addEventListener('resize', draw);
+    // window.addEventListener('resize', draw);
     window.addEventListener('mousemove', onMouseMove);
     window.requestAnimationFrame(draw);
-  }
-}
-
-export class Triangle extends Canvas {
-  constructor(i, j, orientation, options = {}) {
-    super(document.getElementById('background'));
-    if (orientation === 'up') {
-      this.x =
-        (Math.floor(i / 2) + (j % 2)) * EDGE_LENGTH -
-        EDGE_LENGTH / 2 ** ((j + 1) % 2);
-      this.y = (j + 1) * EDGE_LENGTH;
-      this.yCoefficient = -1;
-    } else if (orientation === 'down') {
-      this.x =
-        (Math.floor(i / 2) - 1) * EDGE_LENGTH + EDGE_LENGTH / 2 ** (j % 2);
-      this.y = j * EDGE_LENGTH;
-      this.yCoefficient = 1;
-    }
-    this.options = {
-      ...TRIANGLE,
-      ...options,
-    };
-    this.i = i;
-    this.j = j;
-  }
-
-  draw() {
-    const ctx = this.canvas.getContext('2d');
-    ctx.beginPath();
-    ctx.moveTo(this.x, this.y);
-    ctx.lineTo(this.x + EDGE_LENGTH, this.y);
-    ctx.lineTo(
-        this.x + EDGE_LENGTH / 2,
-        this.y + this.yCoefficient * EDGE_LENGTH,
-    );
-    ctx.lineTo(this.x, this.y);
-    ctx.closePath();
-    ctx.lineWidth = this.options.lineWidth;
-    ctx.strokeStyle = this.options.strokeStyle;
-    ctx.stroke();
-
-    // Padding
-    if (
-      this.i < CANVAS.paddingLeft + CANVAS.marginLeft ||
-      this.j < CANVAS.paddingTop + CANVAS.marginTop ||
-      this.j >= this.jMax - CANVAS.paddingBottom ||
-      this.i >= this.iMax - CANVAS.paddingRight
-    ) {
-      ctx.fillStyle = 'white';
-    } else {
-      ctx.fillStyle = this.options.fillStyle;
-    }
-    ctx.fill();
   }
 }
