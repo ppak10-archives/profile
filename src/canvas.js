@@ -58,9 +58,11 @@ export default class Canvas {
         }
       }
     }
+
+    window.requestAnimationFrame(this.drawTiling.bind(this));
   }
 
-  onClick(e) {
+  onMouseMove(e) {
     if (!CANVAS.coordinateType) {
       this.mouseX = e.x;
       this.mouseY = e.y;
@@ -87,15 +89,15 @@ export default class Canvas {
       const xRemainderTriangles = xRemainder - xFirstPairTriangle <= 0 ? 1 : 2;
       this.i = 2 * xCompletePairs + xRemainderTriangles;
     }
-    this.drawTiling();
+    // this.drawTiling();
   }
 
   start() {
     const draw = this.drawTiling.bind(this);
-    const onClick = this.onClick.bind(this);
+    const onMouseMove = this.onMouseMove.bind(this);
     window.addEventListener('resize', draw);
-    window.addEventListener('click', onClick);
-    draw();
+    window.addEventListener('mousemove', onMouseMove);
+    window.requestAnimationFrame(draw);
   }
 }
 
@@ -133,8 +135,7 @@ export class Triangle extends Canvas {
     );
     ctx.lineTo(this.x, this.y);
     ctx.closePath();
-    ctx.lineWidth = 1;
-    // ctx.strokeStyle = COLORS[Math.floor(Math.random() * COLORS.length)];
+    ctx.lineWidth = this.options.lineWidth;
     ctx.strokeStyle = this.options.strokeStyle;
     ctx.stroke();
 
@@ -147,7 +148,6 @@ export class Triangle extends Canvas {
     ) {
       ctx.fillStyle = 'white';
     } else {
-      // ctx.fillStyle = COLORS[Math.floor(Math.random() * COLORS.length)];
       ctx.fillStyle = this.options.fillStyle;
     }
     ctx.fill();
