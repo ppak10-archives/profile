@@ -1,14 +1,11 @@
 /**
  * layout.js
- * Classes for layout styles for canvas layer
+ * Class for base canvas layer layout and binds event listeners to methods
  */
 
 // Constants
 import CANVAS from 'constants/canvas.json';
 import TRIANGLE from 'constants/triangle.json';
-
-// Shapes
-import triangle from './shapes/triangle';
 
 // Draws extra set of triangles past maximum index values to hide white space
 const RESIZE_BUFFER = 1;
@@ -16,16 +13,12 @@ const RESIZE_BUFFER = 1;
 export default class Layout {
   constructor(canvas) {
     this.canvas = canvas;
-    this.iMax =
-      2 * (window.innerWidth / TRIANGLE.height) -
-      CANVAS.marginRight +
-      RESIZE_BUFFER;
-    this.jMax = window.innerHeight / TRIANGLE.height - CANVAS.marginBottom;
     this.i = null;
     this.j = null;
+    this.resize();
   }
 
-  drawTiling() {
+  resize() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.iMax =
@@ -33,36 +26,9 @@ export default class Layout {
       CANVAS.marginRight +
       RESIZE_BUFFER;
     this.jMax = window.innerHeight / TRIANGLE.height - CANVAS.marginBottom;
-
-    const drawTriangle = triangle.bind(this);
-    if (this.canvas.getContext) {
-      for (let j = CANVAS.marginTop; j < this.jMax; j++) {
-        for (let i = CANVAS.marginLeft; i < this.iMax; i++) {
-          const orientation = (j + i) % 2 ? 'down' : 'up';
-
-          if (
-            this.i !== null &&
-            this.j !== null &&
-            this.i === i &&
-            this.j === j
-          ) {
-            // Draw triangle
-            const options = {
-              fillStyle: 'blue',
-            };
-            drawTriangle(i, j, orientation, options);
-          } else {
-            // Draw triangle
-            drawTriangle(i, j, orientation);
-          }
-        }
-      }
-    }
-
-    window.requestAnimationFrame(this.drawTiling.bind(this));
   }
 
-  onMouseMove(e) {
+  mouseMove(e) {
     if (!CANVAS.coordinateType) {
       this.mouseX = e.x;
       this.mouseY = e.y;
@@ -92,10 +58,9 @@ export default class Layout {
   }
 
   start() {
-    const draw = this.drawTiling.bind(this);
-    const onMouseMove = this.onMouseMove.bind(this);
-    // window.addEventListener('resize', draw);
+    const onResize = this.resize.bind(this);
+    const onMouseMove = this.mouseMove.bind(this);
+    window.addEventListener('resize', onResize);
     window.addEventListener('mousemove', onMouseMove);
-    window.requestAnimationFrame(draw);
   }
 }

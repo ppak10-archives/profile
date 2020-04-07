@@ -8,8 +8,15 @@ import 'styles/main.less';
 
 // Canvas
 import CanvasManager from './canvas/manager';
-import Layout from './canvas/layout';
+
+// Layout
+import Background from './canvas/layouts/background';
+import Foreground from './canvas/layouts/foreground';
 
 const canvas = new CanvasManager();
-const tileLayout = new Layout(canvas.layers.background);
-tileLayout.start();
+
+const backgroundLayout = new Background(canvas.layers.background);
+const foregroundLayout = new Foreground(canvas.layers.foreground);
+
+backgroundLayout.start();
+foregroundLayout.start();
