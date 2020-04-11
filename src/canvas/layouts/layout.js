@@ -18,26 +18,29 @@ export default class Layout {
     this.canvas = canvas;
     this.mouseI = null;
     this.mouseJ = null;
+    this.tiles = new Map();
     this.resize();
   }
 
   /**
-   * Checks indicies of tiles to make sure that tile placement is valid
+   * Checks canvas and indicies of tiles to ensure valid tile placement
    * @param {Number} i
    * @param {Number} j
    * @return {Boolean}
    */
   checkTile(i, j) {
-    if (i !== null && j !== null) {
-      if (
-        !(
-          i < CANVAS.paddingLeft + CANVAS.marginLeft ||
-          j < CANVAS.paddingTop + CANVAS.marginTop ||
-          j >= this.jMax - CANVAS.paddingBottom ||
-          i >= this.iMax - CANVAS.paddingRight
-        )
-      ) {
-        return true;
+    if (this.canvas.getContext) {
+      if (i !== null && j !== null) {
+        if (
+          !(
+            i < CANVAS.paddingLeft + CANVAS.marginLeft ||
+            j < CANVAS.paddingTop + CANVAS.marginTop ||
+            j >= this.jMax - CANVAS.paddingBottom ||
+            i >= this.iMax - CANVAS.paddingRight
+          )
+        ) {
+          return true;
+        }
       }
     }
     return false;
@@ -49,8 +52,14 @@ export default class Layout {
         for (let i = CANVAS.marginLeft; i < this.iMax; i++) {
           const orientation = (j + i) % 2 ? 'down' : 'up';
           if (this.checkTile(i, j)) {
-            const triangle = new Triangle(this.canvas, i, j, orientation);
-            triangle.draw();
+            if (this.tiles.has(`${i}_${j}`)) {
+              const triangle = this.tiles.get(`${i}_${j}`);
+              triangle.draw();
+            } else {
+              const triangle = new Triangle(this.canvas, i, j, orientation);
+              triangle.draw();
+              this.tiles.set(`${i}_${j}`, triangle);
+            }
           }
         }
       }
@@ -97,10 +106,11 @@ export default class Layout {
     this.jMax = window.innerHeight / TRIANGLE.height - CANVAS.marginBottom;
   }
 
+  /**
+   * Adds common event listeners used with canvas layouts
+   */
   start() {
     const onResize = this.resize.bind(this);
-    const onMouseMove = this.mouseMove.bind(this);
     window.addEventListener('resize', onResize);
-    window.addEventListener('mousemove', onMouseMove);
   }
 }

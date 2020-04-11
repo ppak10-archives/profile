@@ -6,14 +6,6 @@
 // Constants
 import TRIANGLE from 'constants/triangle.json';
 
-/**
- * @this Layout
- * @param {Number} i
- * @param {Number} j
- * @param {String} orientation
- * @param {Object} optionsParams
- */
-
 export default class Triangle {
   constructor(canvas, i, j, orientation, optionsParams = {}) {
     this.canvas = canvas;
