@@ -3,6 +3,9 @@
  * Tiling functions to use with shapes and layouts
  */
 
+// Constants
+const TRANSITION = 1000;
+
 // Shapes
 import Triangle from '../shapes/triangle';
 
@@ -20,12 +23,25 @@ export default function cursor() {
       i++
     ) {
       if (this.checkTile(i, j)) {
-        const options = {
-          fillStyle: 'red',
-        };
-        const orientation = (i + j) % 2 ? 'down' : 'up';
-        const triangle = new Triangle(this.canvas, i, j, orientation, options);
-        triangle.draw();
+        if (this.tiles.has(`${i}_${j}`)) {
+          const triangle = this.tiles.get(`${i}_${j}`);
+          triangle.fall(this.frame, TRANSITION);
+        } else {
+          const options = {
+            fillStyle: 'red',
+          };
+          const orientation = (i + j) % 2 ? 'down' : 'up';
+          const triangle = new Triangle(
+              this.canvas,
+              i,
+              j,
+              orientation,
+              options,
+          );
+          this.tiles.set(`${i}_${j}`, triangle);
+          triangle.fall(this.frame, TRANSITION);
+        }
+        this.animatedTiles.add(`${i}_${j}`);
       }
     }
     if (

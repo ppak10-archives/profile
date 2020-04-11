@@ -1,5 +1,6 @@
 {
   "fillStyle": "black",
+  "base": 25,
   "height": 25,
   "lineWidth": 1,
   "strokeStyle": "green"

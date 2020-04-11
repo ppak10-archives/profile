@@ -12,15 +12,39 @@ import Triangle from '../shapes/triangle';
 
 // Draws extra set of triangles past maximum index values to hide white space
 const RESIZE_BUFFER = 1;
+const FPS = 60;
 
 export default class Layout {
   constructor(canvas, animated = false) {
     this.animated = animated;
+    this.frame = {
+      current: null,
+      previous: null,
+      initial: Date.now(),
+    };
     this.canvas = canvas;
     this.mouseI = null;
     this.mouseJ = null;
     this.tiles = new Map();
     this.resize();
+  }
+
+  animate() {
+    window.requestAnimationFrame(this.animate.bind(this));
+    this.frame = {
+      ...this.frame,
+      current: Date.now(),
+    };
+    const elapsed = this.frame.current - this.frame.previous;
+    if (elapsed > 1000 / FPS) {
+      this.frame = {
+        ...this.frame,
+        previous: this.frame.current - (elapsed % (1000 / FPS)),
+      };
+      const ctx = this.canvas.getContext('2d');
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.draw();
+    }
   }
 
   /**
@@ -112,7 +136,14 @@ export default class Layout {
    * Adds common event listeners used with canvas layouts
    */
   start() {
-    const onResize = this.resize.bind(this);
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', this.resize.bind(this));
+    if (this.animated) {
+      this.frame = {
+        ...this.frame,
+        current: Date.now(),
+        previous: Date.now(),
+      };
+      window.requestAnimationFrame(this.animate.bind(this));
+    }
   }
 }
