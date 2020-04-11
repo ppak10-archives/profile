@@ -11,14 +11,13 @@ export default class Background extends Layout {
     super(canvas);
   }
 
-  drawTiles() {
+  draw() {
     super.drawTiles();
-    window.requestAnimationFrame(this.drawTiles.bind(this));
   }
 
   start() {
     super.start();
-    const draw = this.drawTiles.bind(this);
-    window.requestAnimationFrame(draw);
+    const draw = this.draw.bind(this);
+    draw();
   }
 }

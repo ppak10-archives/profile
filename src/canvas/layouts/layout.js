@@ -14,7 +14,8 @@ import Triangle from '../shapes/triangle';
 const RESIZE_BUFFER = 1;
 
 export default class Layout {
-  constructor(canvas) {
+  constructor(canvas, animated = false) {
+    this.animated = animated;
     this.canvas = canvas;
     this.mouseI = null;
     this.mouseJ = null;
@@ -104,6 +105,7 @@ export default class Layout {
       CANVAS.marginRight +
       RESIZE_BUFFER;
     this.jMax = window.innerHeight / TRIANGLE.height - CANVAS.marginBottom;
+    !this.animated && this.draw();
   }
 
   /**

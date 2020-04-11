@@ -14,7 +14,7 @@ import cursorTiling from '../tilings/triangle';
 
 export default class Foreground extends Layout {
   constructor(canvas) {
-    super(canvas);
+    super(canvas, true);
   }
 
   drawCursorTile() {
@@ -23,7 +23,6 @@ export default class Foreground extends Layout {
       const options = {
         fillStyle: 'blue',
       };
-      // ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       const orientation = (this.mouseJ + this.mouseI) % 2 ? 'down' : 'up';
       const triangle = new Triangle(
           this.canvas,
