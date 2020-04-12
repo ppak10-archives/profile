@@ -30,17 +30,15 @@ export default class Foreground extends Layout {
         this.animatedTiles.delete(key);
       }
     });
-    if (
-      this.checkTile(this.mouseI, this.mouseJ) &&
-      !this.animatedTiles.has(`${this.mouseI}_${this.mouseJ}`)
-    ) {
+    if (this.checkTile(this.mouseI, this.mouseJ)) {
+      const options = {
+        fillStyle: 'blue',
+      };
       if (this.tiles.has(`${this.mouseI}_${this.mouseJ}`)) {
         const triangle = this.tiles.get(`${this.mouseI}_${this.mouseJ}`);
+        triangle.setOptions(options);
         triangle.fall(this.frame, TRANISITION);
       } else {
-        const options = {
-          fillStyle: 'blue',
-        };
         const orientation = (this.mouseJ + this.mouseI) % 2 ? 'down' : 'up';
         const triangle = new Triangle(
             this.canvas,

@@ -89,4 +89,18 @@ export default class Triangle {
       this.frame.previous = null;
     }
   }
+
+  setFrame(frameParameters = {}) {
+    this.frame = {
+      ...this.frame,
+      ...frameParameters,
+    };
+  }
+
+  setOptions(optionParams = {}) {
+    this.options = {
+      ...TRIANGLE,
+      ...optionParams,
+    };
+  }
 }

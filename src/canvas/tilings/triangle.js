@@ -23,13 +23,15 @@ export default function cursor() {
       i++
     ) {
       if (this.checkTile(i, j)) {
+        const options = {
+          fillStyle: 'red',
+        };
         if (this.tiles.has(`${i}_${j}`)) {
           const triangle = this.tiles.get(`${i}_${j}`);
+          triangle.setOptions(options);
+          triangle.setFrame({previous: null});
           triangle.fall(this.frame, TRANSITION);
         } else {
-          const options = {
-            fillStyle: 'red',
-          };
           const orientation = (i + j) % 2 ? 'down' : 'up';
           const triangle = new Triangle(
               this.canvas,
