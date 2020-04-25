@@ -4,7 +4,7 @@
  */
 
 // Constants
-const TRANSITION = 1000;
+const TRANSITION = 500;
 
 // Shapes
 import Triangle from '../shapes/triangle';

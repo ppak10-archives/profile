@@ -13,7 +13,7 @@ import Triangle from '../shapes/triangle';
 import cursorTiling from '../tilings/triangle';
 
 // Constants
-const TRANISITION = 1000;
+const TRANISITION = 500;
 
 export default class Foreground extends Layout {
   constructor(canvas) {
